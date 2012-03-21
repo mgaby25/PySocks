@@ -1,3 +1,11 @@
+Updated version of SocksiPy. Many old bugs fixed, including a bug in __recvall() and a bug in __negotiatehttp() that would hang indefinitely if a sock.recv() returned ""
+
+SocksiPyHandler, courtesy e000, was also added as an example of how this module can be used with urllib2.
+
+urllib3, which powers the requests module, is working on integrating SOCKS proxy support based on this branch.
+
+############
+
 (Original SocksiPy README below)
 
 SocksiPy version 1.03
