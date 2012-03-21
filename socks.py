@@ -1,5 +1,9 @@
 """SocksiPy - Python SOCKS module.
+<<<<<<< HEAD
 Version 1.03
+=======
+Version 1.00
+>>>>>>> origin/master
 
 Copyright 2006 Dan-Haim. All rights reserved.
 
@@ -27,15 +31,24 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMANGE.
 
 This module provides a standard socket-like interface for Python
 for tunneling connections through SOCKS proxies.
+<<<<<<< HEAD
 """
 
 """
+=======
+
+"""
+
+"""
+
+>>>>>>> origin/master
 Minor modifications made by Christopher Gilbert (http://motomastyle.com/)
 for use in PyLoris (http://pyloris.sourceforge.net/)
 
 Minor modifications made by Mario Vilas (http://breakingcode.wordpress.com/)
 mainly to merge bug fixes found in Sourceforge
 
+<<<<<<< HEAD
 Minor modifications made by Anorov (https://github.com/Anorov)
 -Fixed issue with HTTP proxy failure checking (same bug that was in the old __recvall() function) and cleaned things up a bit
 -Included SocksiPyHandler, to be used as a urllib2 handler, courtesy of e000 (https://github.com/e000): https://gist.github.com/869791#file_socksipyhandler.py
@@ -45,6 +58,12 @@ import socket
 import struct
 import urllib2
 import httplib
+=======
+"""
+
+import socket
+import struct
+>>>>>>> origin/master
 import sys
 
 PROXY_TYPE_SOCKS4 = 1
@@ -61,6 +80,7 @@ class Socks5Error(ProxyError): pass
 class Socks4Error(ProxyError): pass
 class HTTPError(ProxyError): pass
 
+<<<<<<< HEAD
 _generalerrors = ("Succeeded",
     "Invalid data",
     "Connection closed unexpectedly",
@@ -73,6 +93,18 @@ _generalerrors = ("Succeeded",
 _socks5errors = ("Succeeded",
     "General SOCKS server failure",
     "Connection not allowed by ruleset",
+=======
+_generalerrors = ("success",
+    "invalid data",
+    "not connected",
+    "not available",
+    "bad proxy type",
+    "bad input")
+
+_socks5errors = ("succeeded",
+    "general SOCKS server failure",
+    "connection not allowed by ruleset",
+>>>>>>> origin/master
     "Network unreachable",
     "Host unreachable",
     "Connection refused",
@@ -81,6 +113,7 @@ _socks5errors = ("Succeeded",
     "Address type not supported",
     "Unknown error")
 
+<<<<<<< HEAD
 _socks5autherrors = ("Succeeded",
     "Authentication is required",
     "All offered authentication methods were rejected",
@@ -92,6 +125,19 @@ _socks4errors = ("Request granted",
     "Request rejected because SOCKS server cannot connect to identd on the client",
     "Request rejected because the client program and identd report different user-ids",
     "Unknown error")
+=======
+_socks5autherrors = ("succeeded",
+    "authentication is required",
+    "all offered authentication methods were rejected",
+    "unknown username or invalid password",
+    "unknown error")
+
+_socks4errors = ("request granted",
+    "request rejected or failed",
+    "request rejected because SOCKS server cannot connect to identd on the client",
+    "request rejected because the client program and identd report different user-ids",
+    "unknown error")
+>>>>>>> origin/master
 
 def setdefaultproxy(proxytype=None, addr=None, port=None, rdns=True, username=None, password=None):
     """setdefaultproxy(proxytype, addr[, port[, rdns[, username[, password]]]])
@@ -111,7 +157,11 @@ def wrapmodule(module):
     if _defaultproxy != None:
         module.socket.socket = socksocket
     else:
+<<<<<<< HEAD
         raise GeneralProxyError(_generalerrors[6])
+=======
+        raise GeneralProxyError((4, "no proxy specified"))
+>>>>>>> origin/master
 
 class socksocket(socket.socket):
     """socksocket([family[, type[, proto]]]) -> socket object
@@ -136,10 +186,16 @@ class socksocket(socket.socket):
         """
         data = self.recv(count)
         while len(data) < count:
+<<<<<<< HEAD
             d = self.recv(count - len(data))
             if not d:
                 raise GeneralProxyError(_generalerrors[2])
             data += d
+=======
+            d = self.recv(count-len(data))
+            if not d: raise GeneralProxyError((0, "connection closed unexpectedly"))
+            data = data + d
+>>>>>>> origin/master
         return data
 
     def setproxy(self, proxytype=None, addr=None, port=None, rdns=True, username=None, password=None):
@@ -166,7 +222,11 @@ class socksocket(socket.socket):
         Negotiates a connection through a SOCKS5 server.
         """
         # First we'll send the authentication packages we support.
+<<<<<<< HEAD
         if (self.__proxy[4] != None) and (self.__proxy[5] != None):
+=======
+        if (self.__proxy[4]!=None) and (self.__proxy[5]!=None):
+>>>>>>> origin/master
             # The username/password details were supplied to the
             # setproxy method so we support the USERNAME/PASSWORD
             # authentication (in addition to the standard none).
@@ -178,9 +238,15 @@ class socksocket(socket.socket):
         # We'll receive the server's response to determine which
         # method was selected
         chosenauth = self.__recvall(2)
+<<<<<<< HEAD
         if chosenauth[0:1] != chr(0x05).encode().encode():
             self.close()
             raise GeneralProxyError(_generalerrors[1])
+=======
+        if chosenauth[0:1] != chr(0x05).encode():
+            self.close()
+            raise GeneralProxyError((1, _generalerrors[1]))
+>>>>>>> origin/master
         # Check the chosen authentication method
         if chosenauth[1:2] == chr(0x00).encode():
             # No authentication is required
@@ -193,19 +259,33 @@ class socksocket(socket.socket):
             if authstat[0:1] != chr(0x01).encode():
                 # Bad response
                 self.close()
+<<<<<<< HEAD
                 raise GeneralProxyError(_generalerrors[1])
             if authstat[1:2] != chr(0x00).encode():
                 # Authentication failed
                 self.close()
                 raise Socks5AuthError(_socks5autherrors[3])
+=======
+                raise GeneralProxyError((1, _generalerrors[1]))
+            if authstat[1:2] != chr(0x00).encode():
+                # Authentication failed
+                self.close()
+                raise Socks5AuthError((3, _socks5autherrors[3]))
+>>>>>>> origin/master
             # Authentication succeeded
         else:
             # Reaching here is always bad
             self.close()
             if chosenauth[1] == chr(0xFF).encode():
+<<<<<<< HEAD
                 raise Socks5AuthError(_socks5autherrors[2])
             else:
                 raise GeneralProxyError(_generalerrors[1])
+=======
+                raise Socks5AuthError((2, _socks5autherrors[2]))
+            else:
+                raise GeneralProxyError((1, _generalerrors[1]))
+>>>>>>> origin/master
         # Now we can request the actual connection
         req = struct.pack('BBB', 0x05, 0x01, 0x00)
         # If the given destination address is an IP address, we'll
@@ -214,11 +294,19 @@ class socksocket(socket.socket):
             ipaddr = socket.inet_aton(destaddr)
             req = req + chr(0x01).encode() + ipaddr
         except socket.error:
+<<<<<<< HEAD
             # Well it's not an IP number, so it's probably a DNS name.
             if self.__proxy[3]:
                 # Resolve remotely
                 ipaddr = None
                 req = req + chr(0x03).encode() + chr(len(destaddr)) + destaddr
+=======
+            # Well it's not an IP number,  so it's probably a DNS name.
+            if self.__proxy[3]:
+                # Resolve remotely
+                ipaddr = None
+                req = req + chr(0x03).encode() + chr(len(destaddr)).encode() + destaddr
+>>>>>>> origin/master
             else:
                 # Resolve locally
                 ipaddr = socket.inet_aton(socket.gethostbyname(destaddr))
@@ -229,14 +317,22 @@ class socksocket(socket.socket):
         resp = self.__recvall(4)
         if resp[0:1] != chr(0x05).encode():
             self.close()
+<<<<<<< HEAD
             raise GeneralProxyError(_generalerrors[1])
+=======
+            raise GeneralProxyError((1, _generalerrors[1]))
+>>>>>>> origin/master
         elif resp[1:2] != chr(0x00).encode():
             # Connection failed
             self.close()
             if ord(resp[1:2])<=8:
                 raise Socks5Error((ord(resp[1:2]), _socks5errors[ord(resp[1:2])]))
             else:
+<<<<<<< HEAD
                 raise Socks5Error(_socks5errors[9])
+=======
+                raise Socks5Error((9, _socks5errors[9]))
+>>>>>>> origin/master
         # Get the bound address/port
         elif resp[3:4] == chr(0x01).encode():
             boundaddr = self.__recvall(4)
@@ -245,7 +341,11 @@ class socksocket(socket.socket):
             boundaddr = self.__recvall(ord(resp[4:5]))
         else:
             self.close()
+<<<<<<< HEAD
             raise GeneralProxyError(_generalerrors[1])
+=======
+            raise GeneralProxyError((1,_generalerrors[1]))
+>>>>>>> origin/master
         boundport = struct.unpack(">H", self.__recvall(2))[0]
         self.__proxysockname = (boundaddr, boundport)
         if ipaddr != None:
@@ -304,7 +404,11 @@ class socksocket(socket.socket):
         if resp[0:1] != chr(0x00).encode():
             # Bad data
             self.close()
+<<<<<<< HEAD
             raise GeneralProxyError(_generalerrors[1])
+=======
+            raise GeneralProxyError((1,_generalerrors[1]))
+>>>>>>> origin/master
         if resp[1:2] != chr(0x5A).encode():
             # Server returned an error
             self.close()
@@ -329,6 +433,7 @@ class socksocket(socket.socket):
             addr = socket.gethostbyname(destaddr)
         else:
             addr = destaddr
+<<<<<<< HEAD
         self.sendall(("CONNECT " + addr + ":" + str(destport) + " HTTP/1.1\r\n" + "Host: " + destaddr + "\r\n\r\n"))
         # We just need the first line to check if the connection was successful
         resp = self.recv(4096)
@@ -341,11 +446,28 @@ class socksocket(socket.socket):
         if statusline[0] not in ("HTTP/1.0", "HTTP/1.1"):
             self.close()
             raise GeneralProxyError(_generalerrors[1])
+=======
+        self.sendall(("CONNECT " + addr + ":" + str(destport) + " HTTP/1.1\r\n" + "Host: " + destaddr + "\r\n\r\n").encode())
+        # We read the response until we get the string "\r\n\r\n"
+        resp = self.recv(1)
+        while resp.find("\r\n\r\n".encode()) == -1:
+            resp = resp + self.recv(1)
+        # We just need the first line to check if the connection
+        # was successful
+        statusline = resp.splitlines()[0].split(" ".encode(), 2)
+        if statusline[0] not in ("HTTP/1.0".encode(), "HTTP/1.1".encode()):
+            self.close()
+            raise GeneralProxyError((1, _generalerrors[1]))
+>>>>>>> origin/master
         try:
             statuscode = int(statusline[1])
         except ValueError:
             self.close()
+<<<<<<< HEAD
             raise GeneralProxyError(_generalerrors[1])
+=======
+            raise GeneralProxyError((1, _generalerrors[1]))
+>>>>>>> origin/master
         if statuscode != 200:
             self.close()
             raise HTTPError((statuscode, statusline[2]))
@@ -361,7 +483,11 @@ class socksocket(socket.socket):
         """
         # Do a minimal input check first
         if (not type(destpair) in (list,tuple)) or (len(destpair) < 2) or (type(destpair[0]) != type('')) or (type(destpair[1]) != int):
+<<<<<<< HEAD
             raise GeneralProxyError(_generalerrors[5])
+=======
+            raise GeneralProxyError((5, _generalerrors[5]))
+>>>>>>> origin/master
         if self.__proxy[0] == PROXY_TYPE_SOCKS5:
             if self.__proxy[2] != None:
                 portnum = self.__proxy[2]
@@ -386,4 +512,8 @@ class socksocket(socket.socket):
         elif self.__proxy[0] == None:
             _orgsocket.connect(self, (destpair[0], destpair[1]))
         else:
+<<<<<<< HEAD
             raise GeneralProxyError(_generalerrors[4])
+=======
+            raise GeneralProxyError((4, _generalerrors[4]))
+>>>>>>> origin/master
