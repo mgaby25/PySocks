@@ -133,7 +133,6 @@ class socksocket(socket.socket):
         Receive EXACTLY the number of bytes requested from the socket.
         Blocks until the required number of bytes have been received.
         """
-        ##consider removal of __recvall, maybe unnecessary
         data = self.recv(count)
         while len(data) < count:
             d = self.recv(count - len(data))
