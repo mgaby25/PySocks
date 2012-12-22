@@ -329,13 +329,15 @@ class socksocket(socket.socket):
         else:
             addr = destaddr
         self.sendall(("CONNECT " + addr + ":" + str(destport) + " HTTP/1.1\r\n" + "Host: " + destaddr + "\r\n\r\n"))
-        # We just need the first line to check if the connection was successful
+        
         resp = self.recv(4096)
         while "\r\n\r\n" not in resp:
             d = self.recv(4096)
             if not d:
                 raise GeneralProxyError(_generalerrors[2])
             resp += d
+            
+       # We just need the first line to check if the connection was successful
         statusline = resp.splitlines()[0].split(" ", 2)
         if statusline[0] not in ("HTTP/1.0", "HTTP/1.1"):
             self.close()
